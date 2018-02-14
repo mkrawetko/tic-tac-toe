@@ -24,19 +24,19 @@ class Board extends React.Component {
         super(props);
         this.state = {
             squares: Array(9).fill(null),
-            nextPlayer: 'X',
-            winner: null
+            nextPlayer: 'X'
         };
     }
 
     handleClick(name) {
         let squares = this.state.squares.slice();
-        squares[name] = this.state.nextPlayer;
-        if (!this.state.winner) {
-            let winner = this.findWinner(squares);
-            let nextP = this.state.nextPlayer === 'X' ? 'O' : 'X';
-            this.setState({squares: squares, nextPlayer: nextP, winner: winner})
+        if (this.findWinner(squares) || squares[name]) {
+            return;
         }
+        squares[name] = this.state.nextPlayer;
+        let winner = this.findWinner(squares);
+        this.setState({squares: squares, nextPlayer: this.state.nextPlayer === 'X' ? 'O' : 'X'})
+
     }
 
     solutions = [
@@ -52,22 +52,22 @@ class Board extends React.Component {
 
     findWinner(squares) {
         for (let i = 0; i < this.solutions.length; i++) {
-            let solution = this.solutions[i];
-            let player = squares[solution[0]];
-            if (player === squares[solution[1]] && player === squares[solution[2]]) {
-                return player;
+            let [a, b, c] = this.solutions[i];
+            if (squares[a] === squares[b] && squares[a] === squares[c]) {
+                return squares[a];
             }
         }
         return null;
     };
 
     renderSquare(i) {
-        return <Square name={i} value={this.state.squares[i]} onClick={() => this.handleClick(i)}/>;
+        return <Square value={this.state.squares[i]} onClick={() => this.handleClick(i)}/>;
     }
 
 
     render() {
-        const status = this.state.winner ? 'Winner: ' + this.state.winner : 'Next player: ' + this.state.nextPlayer;
+        let winner = this.findWinner(this.state.squares);
+        const status = winner ? 'Winner: ' + winner : 'Next player: ' + this.state.nextPlayer;
 
         return (
             <div>
