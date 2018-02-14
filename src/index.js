@@ -39,9 +39,24 @@ class Board extends React.Component {
         }
     }
 
+    solutions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 6],
+        [0, 4, 8],
+        [6, 4, 2],
+    ];
+
     findWinner(squares) {
-        if (squares[8] === 'O') {
-            return 'O'
+        for (let i = 0; i < this.solutions.length; i++) {
+            let solution = this.solutions[i];
+            let player = squares[solution[0]];
+            if (player === squares[solution[1]] && player === squares[solution[2]]) {
+                return player;
+            }
         }
         return null;
     };
