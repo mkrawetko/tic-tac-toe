@@ -12,9 +12,6 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     renderSquare(i) {
         return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)}/>;
@@ -94,7 +91,7 @@ class Game extends React.Component {
             {
                 let desc = move ? "Go to move: #" + move : "Go to game start";
                 return (
-                    <li>
+                    <li key={move}>
                         <button>{desc}</button>
                     </li>
                 )
