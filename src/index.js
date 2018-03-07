@@ -51,40 +51,27 @@ class Game extends React.Component {
 
     handleClick(name) {
         let squares = this.state.history[this.state.history.length - 1].slice();
-        if (this.findWinner(squares) || squares[name]) {
+        if (findWinner(squares) || squares[name]) {
             return;
         }
         squares[name] = this.state.nextPlayer;
-        let newHistory = this.state.history.slice(0);
-        newHistory.push(squares);
-        this.setState({history: newHistory, nextPlayer: this.state.nextPlayer === 'X' ? 'O' : 'X'})
+        this.setState({
+            history: this.state.history.concat([squares]),
+            nextPlayer: this.state.nextPlayer === 'X' ? 'O' : 'X'
+        })
     }
 
 
-    solutions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 6],
-        [0, 4, 8],
-        [6, 4, 2],
-    ];
+    jumpTo(move) {
+        this.setState({
+            history: this.state.history.slice(0, move + 1),
+            nextPlayer: move % 2 === 0 ? "X" : "O"
+        })
+    }
 
-
-    findWinner(squares) {
-        for (let i = 0; i < this.solutions.length; i++) {
-            let [a, b, c] = this.solutions[i];
-            if (squares[a] === squares[b] && squares[a] === squares[c]) {
-                return squares[a];
-            }
-        }
-        return null;
-    };
 
     render() {
-        let winner = this.findWinner(this.state.history[this.state.history.length - 1]);
+        let winner = findWinner(this.state.history[this.state.history.length - 1]);
         const status = winner ? 'Winner: ' + winner : 'Next player: ' + this.state.nextPlayer;
 
         const moves = this.state.history.map((step, move) => {
@@ -92,7 +79,7 @@ class Game extends React.Component {
                 let desc = move ? "Go to move: #" + move : "Go to game start";
                 return (
                     <li key={move}>
-                        <button>{desc}</button>
+                        <button onClick={() => this.jumpTo(move)}>{desc}</button>
                     </li>
                 )
             }
@@ -114,6 +101,27 @@ class Game extends React.Component {
     }
 }
 
+
+function findWinner(squares) {
+    const solutions = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 6],
+        [0, 4, 8],
+        [6, 4, 2],
+    ];
+
+    for (let i = 0; i < solutions.length; i++) {
+        let [a, b, c] = solutions[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+            return squares[a];
+        }
+    }
+    return null;
+}
 // ========================================
 
 ReactDOM.render(
